@@ -55,36 +55,21 @@ const triggerMouseEvent = (element, eventName) => {
       const coords = getMousePosition(e);
       transform.setTranslate(coords.x - offset.x, coords.y - offset.y);
       trash.style.visibility = "visible";
-      
-      if(isMouseInTrash(coords)) {        
-        trash.style.fill = trashActiveColor;
-        
-        if(!trashTimeout) {
-          trashTimeout = setTimeout(() => {
-            selectedPart.remove(); // remove element when it goes to the trash
-            trash.style.fill = trashInactiveColor
-            triggerMouseEvent(remixSVG, 'mouseup');
-          }, 500);
-        }
-      }
-      else {
-        if(trashTimeout){
-          clearTimeout(trashTimeout); // remove trash removal timeout if mouse moves out of trash bin
-          trashTimeout = undefined;
-          trash.style.fill = trashInactiveColor;
-        }
-      }
+      trash.style.fill = isMouseInTrash(coords) ? trashActiveColor : trashInactiveColor;
     }
   }
   
-  const mouseUpHandler = () => {
+  const mouseUpHandler = (e) => {
+    const coords = getMousePosition(e);
+    
+    if(isMouseInTrash(coords)) {
+      selectedPart.remove();
+    }
+    
     selectedPart = undefined;
     trash.style.fill = trashInactiveColor;
     trash.style.visibility = "hidden";
   }
-  
-  
-  
   
   remixSVG.addEventListener('mousedown', mouseDownHandler);
   remixSVG.addEventListener('mousemove', mouseMoveHandler);
